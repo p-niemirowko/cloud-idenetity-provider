@@ -21,10 +21,11 @@ public class SecurityConfig {
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfigurer configurer = OAuth2AuthorizationServerConfigurer.authorizationServer();
 
+        configurer.oidc(Customizer.withDefaults());
+
         http
                 .securityMatcher(configurer.getEndpointsMatcher())
-                .with(configurer, Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults());
+                .with(configurer, Customizer.withDefaults());
 
         return http.build();
     }
