@@ -4,8 +4,13 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.pniemirowko.cloud.identity.provider.entity.AppUser;
+import com.pniemirowko.cloud.identity.provider.repositroy.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -15,6 +20,21 @@ import java.util.UUID;
 
 @Configuration
 public class TokenConfig {
+
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer(
+            UserRepository userRepository) {
+
+        return context -> {
+            if (context.getTokenType().getValue().equals("access_token")) {
+                Authentication authentication = context.getPrincipal();
+                String username = authentication.getName();
+                AppUser user = userRepository.findUserByUsername(username)
+                        .orElseThrow();
+                context.getClaims().claim("userId", user.getId());
+            }
+        };
+    }
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {

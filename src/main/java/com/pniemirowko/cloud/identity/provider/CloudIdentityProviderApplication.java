@@ -24,7 +24,7 @@ public class CloudIdentityProviderApplication {
 
 		return args -> {
 
-			if (userRepository.findByUsername("admin").isEmpty()) {
+			if (userRepository.findUserByUsername("admin").isEmpty()) {
 
 				AppUser admin = AppUser.builder()
 						.username("admin")
@@ -35,7 +35,7 @@ public class CloudIdentityProviderApplication {
 				userRepository.save(admin);
 			}
 
-			if (userRepository.findByUsername("user").isEmpty()) {
+			if (userRepository.findUserByUsername("user").isEmpty()) {
 
 				AppUser user = AppUser.builder()
 						.username("user")
