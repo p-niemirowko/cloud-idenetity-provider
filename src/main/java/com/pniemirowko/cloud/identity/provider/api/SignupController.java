@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class SignupController {
 
@@ -34,6 +33,6 @@ public class SignupController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
-        return ResponseEntity.status(201).body(response.get());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response.get());
     }
 }

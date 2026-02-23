@@ -2,8 +2,10 @@ package com.pniemirowko.cloud.identity.provider.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -13,10 +15,10 @@ import java.util.Set;
 public class AppUser {
 
     @Id
-    @Setter(AccessLevel.NONE)
     @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.TIME)
+    private UUID id;
 
     @Column(unique = true)
     private String username;
