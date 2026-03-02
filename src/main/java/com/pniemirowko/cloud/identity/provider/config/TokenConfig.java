@@ -9,6 +9,7 @@ import com.pniemirowko.cloud.identity.provider.repositroy.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 
@@ -26,12 +27,23 @@ public class TokenConfig {
             UserRepository userRepository) {
 
         return context -> {
-            if (context.getTokenType().getValue().equals("access_token")) {
+            if (AuthorizationGrantType.AUTHORIZATION_CODE.equals(
+                    context.getAuthorizationGrantType())) {
+
                 Authentication authentication = context.getPrincipal();
                 String username = authentication.getName();
                 AppUser user = userRepository.findUserByUsername(username)
-                        .orElseThrow();
+                        .orElseThrow(); // todo exception handler
                 context.getClaims().claim("userId", user.getId());
+                context.getClaims().claim("type", TokenType.CLIENT.name());
+            }
+
+            if (AuthorizationGrantType.CLIENT_CREDENTIALS.equals(
+                    context.getAuthorizationGrantType())) {
+
+                context.getClaims().claim("type", TokenType.SERVICE.name());
+                context.getClaims().claim("service_name",
+                        context.getRegisteredClient().getClientId());
             }
         };
     }

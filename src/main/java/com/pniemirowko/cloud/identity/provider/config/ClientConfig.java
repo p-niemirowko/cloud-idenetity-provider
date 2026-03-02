@@ -21,7 +21,14 @@ public class ClientConfig {
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
 
-        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        RegisteredClient userClient = createUserClient();
+        RegisteredClient bookingServiceClient = createBookingServiceClient();
+
+        return new InMemoryRegisteredClientRepository(userClient, bookingServiceClient);
+    }
+
+    private RegisteredClient createUserClient() {
+        return RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("postman-client")
                 .clientSecret(passwordEncoder.encode("secret"))
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -30,7 +37,16 @@ public class ClientConfig {
                 .redirectUri("https://oauth.pstmn.io/v1/callback")
                 .scope("read")
                 .build();
+    }
 
-        return new InMemoryRegisteredClientRepository(registeredClient);
+    private RegisteredClient createBookingServiceClient() {
+        return RegisteredClient
+                .withId(UUID.randomUUID().toString())
+                .clientId("booking-service")
+                .clientSecret(passwordEncoder.encode("booking-secret")) // na start
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .scope("payment.create")
+                .scope("property.read")
+                .build();
     }
 }
