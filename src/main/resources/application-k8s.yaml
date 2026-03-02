@@ -13,8 +13,8 @@ spring:
 
   datasource:
     hikari:
-      initializationFailTimeout: 60000
-    url: jdbc:postgresql://localhost:5432/authserver
+      initializationFailTimeout: 10000
+    url: jdbc:postgresql://postgres:5432/auth
     username: auth-server
     password: password
 
